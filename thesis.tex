@@ -9,9 +9,62 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{xspace}
+\usepackage{import}
 
-\newcommand{\tauh}{\tau_{\rm h}}
+\newlength\cmsFigWidth
+\ifthenelse{\boolean{cms@external}}{\setlength\cmsFigWidth{0.85\columnwidth}}{\setlength\cmsFigWidth{0.4\textwidth}}
+\ifthenelse{\boolean{cms@external}}{\providecommand{\cmsLeft}{top}}{\providecommand{\cmsLeft}{left}}
+\ifthenelse{\boolean{cms@external}}{\providecommand{\cmsRight}{bottom}}{\providecommand{\cmsRight}{right}}
+
+\newcommand{\eslash}{\ensuremath{{\hbox{$E$\kern-0.44em\lower-.05ex\hbox{/}\kern0.10em}}}}
+\newcommand{\pT}{\ensuremath{p_\textrm{T}}\xspace}
+\newcommand{\ptref}{\ensuremath{p_\textrm{T}^{\rm Ref}}\xspace}
+\newcommand{\vecpt}{\ensuremath{\vec{p}_\textrm{T}}\xspace}
+\newcommand{\ivecpt}[1]{\ensuremath{\vec{p}_{\textrm{T},#1}}\xspace}
+\newcommand{\ptmiss}{\ensuremath{p_\textrm{T}^{\rm miss}}\xspace}
+\newcommand{\ptmissref}{\ensuremath{p_\textrm{T,Ref}^{\rm miss}}\xspace}
+\newcommand{\ptmissof}[1]{\ensuremath{p_\textrm{T,#1}^{\rm miss}}\xspace}
 \newcommand{\vecptmiss}{\ensuremath{\vec{p}_\textrm{T}^{\rm miss}}\xspace}
+\newcommand{\vecptmissof}[1]{\ensuremath{\vec{p}_\textrm{T,#1}^{\rm miss}}\xspace}
+\newcommand{\vecptmissref}{\ensuremath{\vec{p}_\textrm{T,Ref}^{\rm miss}}\xspace}
+\newcommand{\ptmissxy}{\ensuremath{{p}_\textrm{T,x,y}^\textrm{\kern0.10em miss}}\xspace}
+\newcommand{\mT}{\ensuremath{m_{\textrm{T}}}\xspace}
+% \newcommand{\sumET}{\ensuremath{\Sigma E_\textrm{T}}\xspace}
+\newcommand{\sumpt}{\ensuremath{\Sigma p_\textrm{T}}\xspace}
+% \newcommand{\METxy}{\ensuremath{{E}_\textrm{T,x,y}^\textrm{\kern0.10em miss}}\xspace}
+\newcommand{\tauh}{\ensuremath{\Pgt_{\textrm{h}}}\xspace}
+\newcommand{\kT}{\ensuremath{k_\textrm{T}}\xspace}
+
+\newcommand{\Phminus}{{\rm h}^{-}}
+\newcommand{\PZ}{\cPZ}
+%\newcommand{\PW}{\cPW}
+\newcommand{\Plepton}{\ensuremath{\ell}}
+\newcommand{\PLepton}{\ensuremath{\ell}}
+\newcommand{\Ppizero}{\ensuremath{\Pgpz}}
+\newcommand{\Pnu}{\ensuremath{\PGn}}
+\newcommand{\Pnut}{\ensuremath{\PGn_{\Pgt}}}
+\newcommand{\APnue}{\ensuremath{\PAGn_{\Pe}}}
+\newcommand{\APnum}{\ensuremath{\PAGn_{\Pgm}}}
+\newcommand{\APnut}{\ensuremath{\PAGn_{\Pgt}}}
+\renewcommand{\PJgy}{\ensuremath{\cmsSymbolFace{J}/\Psi}\xspace}
+\newcommand{\PUpsilon}{\ensuremath{\Upsilon}\xspace}
+\renewcommand{\Pgg}{\ensuremath{\PGg}\xspace}
+\newcommand{\Pggx}{\ensuremath{\PGg^{*}}\xspace}
+\newcommand{\PWprime}{\ensuremath{\PW'}\xspace}
+\newcommand{\PZprime}{\ensuremath{\cPZ'}\xspace}
+\newcommand{\APnu}{\ensuremath{\bar{\Pnu}}\xspace}
+\newcommand{\PHiggs}{\ensuremath{\PH}}
+\newcommand{\Pquark}{\ensuremath{\PQq}}
+\newcommand{\APquark}{\ensuremath{\PAQq}}
+\newcommand{\Pgamma}{\ensuremath{\PGg}}
+\newcommand{\Pbottom}{\ensuremath{\PQb}}
+\newcommand{\Ptop}{\ensuremath{\PQt}}
+\newcommand{\colin}[1]{\textcolor{BurntOrange}{\bf #1}}
+
+\newif\ifcontents
+\contentstrue
+
+
 
 \begin{document}
 \title{Reconstruction du flux de particules et mise en évidence de la désintégration du boson de Higgs en paire de $\tau$.}
@@ -70,178 +123,76 @@
 \vspace*{10cm}
 À Maud et Camille.
 
-\newpage
+\pagebreak
 
-\section*{Avant-propos}
+\input{avant_propos}
 
-Ce mémoire est formé de deux articles qui constituent le fil conducteur de mon activité sur CMS depuis mon arrivée dans cette collaboration en 2005. 
-Le premier, en cours de finalisation avant soumission au Journal of Instrumentation, décrit l'algorithme de reconstruction du flux de particules (PF).
-Le second, publié au début de l'année 2014 dans le Journal of High Energy Physics, annonce la première mise en évidence du couplage du boson de Higgs à la matière, dans le canal de désintégration $H \rightarrow \tau \tau$. 
-Afin de me consacrer à ces deux sujets qui me sont particulièrement chers, 
-je ne parlerai pas des recherches de particules supersymétriques auxquelles j'ai consacré deux ans
-ni de la découverte du boson de Higgs à laquelle j'ai contribué dans le canal $H \rightarrow ZZ \rightarrow$~4 leptons. 
-Je ferai également l'impasse sur mon activité actuelle, qui s'inscrit le long de cette ligne directrice: études prospectives pour les futurs collisionneurs circulaires notamment dans le secteur du Higgs, développement d'une simulation rapide de détecteurs basés sur le PF, 
-création d'une équipe $H \rightarrow \tau \tau$ à Lyon pour l'analyse des données du Run II du LHC.
-Enfin, je ne couvrirai pas mes responsabilités et contributions plus techniques comme par exemple la constitution de l'équipe d'analyse du groupe CERN de CMS, la création et la maintenance d'outils de computing et d'analyse utilisés par des dizaines de physiciens dans plusieurs expériences, et la coordination du groupe de développement logiciel pour les expériences du FCC (Futurs Collisionneurs Circulaires). 
+\chapter{Particle-flow reconstruction and global event description with the CMS detector} 
 
-La reconstruction du flux de particules (PF) consiste à combiner les informations de tous les détecteurs de l'expérience pour reconstruire et identifier de manière optimale chacune des particules stables de l'état final de la collision: electrons, muons, photons, hadrons chargés, et hadrons neutres. 
-Cette technique, couronnée de succès au LEP et notamment dans ALEPH, 
-est maintenant à la base de la conception des futurs détecteurs généralistes pour la physique des hautes énergies 
-pour l'ILC, CLIC, et le FCC. 
-Cependant, au milieu des années 2000, seulement quelques années avant le démarrage du LHC, 
-personne n'était encore parvenu à faire fonctionner cette technique en collisionneur hadronique.
-Patrick Janot avait déjà lancé quelques études préliminaires dans CMS et réalisé que ce détecteur avait les caractéristiques nécessaires pour cette technique de reconstruction, 
-et j'ai décidé de le rejoindre pour placer les premières pierres de l'algorithme de PF de CMS.
-Durant la première année, j'ai créé l'algorithme de collecte ({\em
-  clustering}) permettant une mesure optimale des dépôts d'énergie
-dans tous les calorimètres, puis mis en place la première version du PF permettant la reconstruction des photons, des hadrons chargés et des hadrons neutres, 
-démontrant d'excellentes performances pour les désintégrations hadroniques du $\tau$, un système relativement simple.
-Ces études ont mené à la création du groupe ``PF et identification des $\tau$'', dont Rick Cavanaugh et Patrick Janot ont pris la direction. 
-Pour ma part, après avoir créé l'infrastructure logicielle pour le PF dans CMS et plus de 50 000 lignes de code, j'ai pris la responsabilité de ce logiciel, et encadré avec Patrick Janot une dizaine de personnes lors du développement d'améliorations et d'extensions, notamment Michele Pioppi (traces des particules chargées), Florian Beaudette et Daniele Benedetti (électrons), Matt Nguyen (muons), Maxime Gouzevitch (interactions nucléaires et conversions dans le trajectographe), Michel Della Negra (reconstruction des hadrons chargés de haute énergie), et Alexandre Zabi (gerbes hadroniques dans le HCAL).
-En 2008, j'ai pris avec Simone Gennai la tête du groupe ``PF et identification des $\tau$'', alors que Patrick me remplaçait en tant que responsable du logiciel pour mettre la dernière main à notre algorithme. 
-C'est à la fin de cette année-là que je pus enfin présenter nos résultats lors d'un séminaire au département de physique du CERN: une très nette amélioration des performances globales de CMS, par exemple d'un facteur deux pour la résolution en énergie des jets. 
-%À cette occasion un célèbre physicien du CERN me fit le commentaire suivant: 
-%``Vous comptez vraiment utiliser ça au démarrage du LHC? eh bien je ne me fais pas de souci pour ATLAS...''
-%Compte tenu du fait que nous étions en train de révolutionner la reconstruction des objets de physique de CMS à un an du démarrage, son inquiétude était tout à fait légitime, et était en fait partagée par la grande majorité des membres de la collaboration. 
-Au démarrage du LHC, j'ai coordonné et encadré le groupe pour une série d'analyses qui permirent de valider progressivement sur les données tous les aspects du PF: reconstruction des photons et des hadrons chargés avec les événements de diffusion proton-proton inélastiques, reconstruction des particules dans les jets et de l'énergie transverse manquante avec les premiers événements multijet, et finalement validation de la reconstruction et de l'identification des leptons avec l'accumulation d'un échantillon suffisant de bosons W et Z. 
-Pour s'assurer du bon fonctionnement de notre algorithme, nous dûmes empiéter sur le domaine des autres groupes ``objets'' de CMS, notamment Jet/MET, e/gamma, et muons, qui n'avaient pas encore adopté le PF et focalisaient leurs efforts sur les techniques de reconstruction traditionnelles. Il nous fallut gagner de haute lutte le droit d'utiliser les jets et les leptons présents dans les données collectées par CMS ainsi que celui de publier nos résultats -- du moins en partie et seulement dans des notes publiques. 
-Par la suite, dès 2010, tous les groupes ``objets'' adoptèrent le PF comme méthode standard, et le groupe ``PF et identification des $\tau$'' put être dissout. 
-Il nous fallut cependant attendre la publication d'un premier article par chacun des groupes ``objets'' avant de pouvoir proposer en 2014 l'article de référence sur le PF présenté en première partie dans ce mémoire. 
-Je pris la responsabilité de la rédaction de cet article avec Patrick Janot et Jan Steggemann, 
-et je proposai d'impliquer fortement les cinq groupes ``objets''. 
-Mener à bien ce projet nous prit deux ans, durant lesquels j'eus à négocier avec chacun des groupes ``objets'' le contenu scientifique de l'article, à mener et superviser l'analyse, et à gérer la revue interne à la collaboration. 
+\pagebreak 
 
-L'étude de la désintégration du boson de Higgs en $\tau$ est un sujet qui m'intéresse depuis longtemps. 
-À l'origine, c'est pour découvrir le boson de Higgs au LHC que je décidai en 2005 de quitter la physique hadronique après une thèse sur la polarisation des gluons dans le nucléon avec l'expérience COMPASS.
-J'avais en effet réalisé que je m'étais contenté durant cette thèse d'étudier un système, le nucléon, plutôt qu'une théorie fondamentale. 
-Après avoir vu le PF en action sur les désintégration hadroniques du $\tau$, 
-je me mis à la recherche d'une analyse qui puisse servir de banc de test à cette technique de reconstruction. 
-La canal $H \to \tau \tau$ m'apparut vite comme le candidat idéal. 
-D'abord, sur collisionneur hadronique, ce mode de désintégration est de loin le plus adapté à l'étude du couplage entre le boson de Higgs et la matière. 
-Ensuite, l'état final, particulièrement complexe, fait intervenir tous les objets de physique obtenus à partir du flux de particules reconstruites.
-En effet, chacun des deux $\tau$ se désintègre de manière hadronique en quelques hadrons bien collimatés, 
-ou de manière leptonique en électron ou en muon, tout en émettant un ou deux neutrino révélés par de l'énergie transverse manquante. 
-En plus de ces produits de désintégration, réclamer des jets dans l'état final permet d'augmenter le rapport signal sur bruit, en ciblant notamment la production du boson de Higgs par fusion de bosons vecteurs qui donne lieu à deux quarks de rapidité très différente, une signature tout à fait caractéristique. 
-À mon entrée au CNRS en 2007, je lançai avec le soutien d'Yves Sirois une équipe $H \to \tau \tau$ au sein du groupe CMS de l'École Polytechnique de Palaiseau. 
-Yves maintint et développa cette équipe bien après mon départ pour le CERN, et elle contribua fortement à la mise en évidence de ce mode de désintégration. 
-En 2011, je créai l'équipe $H \to \tau \tau$ du groupe CERN. 
-Je parvins à y attirer cinq fellows recherche et un doctorant et, au bout de deux ans, nous prîmes la position dominante sur cette analyse hautement prioritaire dans CMS.
-Je devins alors avec Jan Steggemann l'éditeur de l'article présenté dans ce mémoire, 
-et de facto le coordinateur de cette analyse dans CMS. 
-À cette époque, cinq grands groupes participaient à l'analyse principale: le CERN, l'École Polytechnique, Imperial College, le MIT, et l'Université du Wisconsin.
-En plus de mener l'analyse pour le groupe CERN, mes tâches les plus ardues furent de rassembler ces groupes et de les aider à converger vers une stratégie d'analyse commune tout en en limitant l'intense compétition interne, 
-et de m'assurer de la pertinence et de l'exactitude de dizaines d'analyses indépendantes.
-Dès le début de 2013, nous pûmes révéler aux rencontres de Moriond 
-un excès d'évévenements important, correspondant à 2.94 déviations standard, qui constituait la première indication d'une possible désintégration du boson de Higgs en paire de $\tau$. 
-Après une réoptimisation complète de l'analyse, nous publiâmes un an plus tard le résultat final dans l'article présenté dans ce mémoire, avant que je quitte le CERN pour rejoindre Lyon.  
+\section{Introduction}
+\label{sec:introduction}
 
-Ce travail est évidemment un travail d'équipe, et je souhaite profiter de cet avant-propos pour remercier les personnes avec qui j'ai eu tant plaisir à travailler.  
-Je remercie tous les membres du groupe PF, qui ont fait de ce projet un tel succès et avec qui j'ai passé mes plus belles années dans CMS.  
-Je tiens également à remercier tous les membres de l'équipe $H \to \tau \tau$ du CERN, et notamment Jan Steggemann, qui m'a fait le grand plaisir d'accepter de prendre en charge l'édition d'une partie de chacun des deux articles présentés ici.  
-Je remercie Yves Sirois et tous les membres de l'équipe CMS du laboratoire Leprince-Ringuet pour leur soutien, 
-ainsi que Guy Chanfray, Patrice Verdier, et toute l'équipe CMS de l'IPNL pour leur soutien et l'excellent accueil qu'ils m'ont réservé à Lyon. 
-Enfin, je remercie tout particulièrement mon cher ami Patrick Janot, pour tout ce qu'il m'a apporté au cours de ces dix dernières années. Nos routes ne se sépareront pas. 
+\subimport*{PRF-14-001/trunk/}{introduction.tex}
+
+\section{The CMS detector }
+\label{sec:cms_detector}
+
+\subimport*{PRF-14-001/trunk/}{cms_detector.tex}
+
+
+%\clearpage
+
+\section{Reconstruction of the particle-flow elements}
+\label{sec:reconstruction_pf_elements}
+
+\subimport*{PRF-14-001/trunk/}{reconstruction_pf_elements.tex}
+
+%\clearpage
+
+\section{Particle identification and reconstruction}
+\label{sec:particle_id_reco}
+
+\subimport*{PRF-14-001/trunk/}{particle_id_reco.tex}
+
+\clearpage
+
+\section{Performance}
+\label{sec:expected_performance}
+
+\subimport*{PRF-14-001/trunk/}{expected_performance.tex}
+
+\clearpage 
+
+\section{Validation with 2012 data and pileup mitigation}
+\label{sec:commissioning_and_pileup}
+
+\subimport*{PRF-14-001/trunk/}{commissioning_and_pileup.tex}
+
+\clearpage
+
+\section{Summary and outlook}
+\label{sec:summary}
+
+\subimport*{PRF-14-001/trunk/}{summary.tex}
+
+
+% \section{The CMS detector }
+% \label{sec:cms_detector}
+
+% \subimport*{PRF-14-001/trunk/}{PRF-14-001/trunk/cms_detector}
+
+\chapter{Evidence for the 125\GeV Higgs boson decaying to a pair of $\tau$ leptons}
+
+\pagebreak 
+
+\input{conclusion}
 
 \newpage 
 
-\section*{Conclusion} 
+\input{resume}
 
-
-La reconstruction du flux de particules, qui améliore nettement les performances de CMS et permet de tirer le meilleur parti des données collectées, est maintenant utilisée dans la quasi-totalité des mesures réalisées par la collaboration. 
-Les états finals considérés dans la recherche de $\PH \to \tau \tau$ font intervenir l'ensemble des objets de physique de CMS, et le PF influe donc particulièrement sur les performances de cette analyse. 
-Pour quantifier les améliorations apportées par le PF sur cette analyse, il aurait fallu refaire l'analyse avec les objets traditionnels.
-Cependant, bon nombre de ces objets ne sont plus maintenus par la collaboration; ils ne sont plus présents dans la reconstruction standard, et les diverses mesures nécessaires pour une analyse basée sur ces objets (incertitudes systématiques, facteurs de correction pour la simulation) ne sont plus réalisées. 
-De plus, il aurait fallu revoir complètement la stratégie d'analyse pour l'adapter à ces objets moins performants. 
-Il est néanmoins possible de se faire une idée qualitative des répercussions les plus importantes du PF sur cette analyse. 
-L'efficacité d'identification des $\tauh$, tout d'abord, est améliorée de plus d'un facteur deux pour une même probabilité d'identifier un jet comme $\tauh$. 
-Dans le canal complètement hadronique $\PH \to \tauh \tauh$, cette amélioration se traduit par une diminution d'un facteur quatre du bruit de fond le plus important provenant de la production QCD d'événements multijets. 
-L'analyse aurait pu être envisagée dans ce canal avec les $\tauh$ calorimétriques traditionnels
-mais il aurait alors fallu augmenter le seuil sur l'impulsion transverse du boson de Higgs candidat, $p_{\rm T}^{\tau \tau}$, 
-au prix d'une réduction de l'efficacité de sélection du signal.   
-Dans les canaux $\mu \tauh$ et $\Pe \tauh$, le bruit de fond $\PW$+jets joue un rôle majeur, 
-et ce bruit de fond est supprimé en rejetant les événements avec $m_{\rm T}>30\,\GeV$. 
-Le PF améliore grandement la résolution sur \vecptmiss (sur sa norme comme sur son azimuth), 
-et permet de conserver ses améliorations avec niveau d'empilement élevé. 
-Revenir à une reconstruction calorimétrique de \vecptmiss étalerait les distributions en $m_{\rm T}$ 
-du signal et du bruit de fond $\PW$+jets, et les rendrait difficilement séparables. 
-La résolution sur \vecptmiss domine également la reconstruction de la masse du système $\tau \tau$ par le {\sc SVFIT}.
-Pour $m_{\rm H} = 125\,\GeV$, la distribution en $m_{\tau\tau}$ du signal se trouve sur le front descendant de celle du bruit de fond 
-$\cPZ \to \tau \tau$, et les deux pics sont à peine résolus, même avec la PF \vecptmiss.
-Avec la \vecptmiss traditionnelle, la séparation entre ces deux pics deviendrait extrêmement difficile. 
-Il se pourrait alors que la recherche du signal ne puisse plus se faire dans la distribution de $m_{\tau\tau}$,  
-ce qui compromettrait sérieusement la mesure de la masse de la résonance détectée. 
-
-
-
-
-
-
-premiere mise en evidence de H->tau tau et donc du couplage du boson de Higgs a la matiere
-incertitude sur $\kappa_F$ ($\kappa_\tau$)
-
-comparaison avec ATLAS (ou parler de la mesure la plus precise a ce jour)? 
-projections run II - mentionner 2 thesards. 
-projections HL-LHC (se renseigner là-dessus)
-
-Mesure des couplages : FCC (nommer ILC ou pas?) 
-
-FCC 
-LEP3/TLEP 
-design study 
-fcc software convener
-papas 
-
-outlook PF -- comment integrer ca? 
-run 2, HL-LHC, FCC ee et hh 
-
-\begin{itemize}
-\item Comparer target PTDR aux resultats obtenus ici. le faire pour la soutenance, mais ne pas le mentionner. 
-\item questions H->tau tau 
-\item evolution sigma(H->tautau) vs mH
-\item revoir sigma H, BR H
-\item  Higgs CP measurement H->tau tau : contact Yuta / Emmanuelle? 
-\item   MSSM H->tautau relire papiers
-\item   relire combination papers (CMS, CMS+ATLAS) - hypothèses pour la mesure des couplages? 
-\item   lire papiers H->tautau atlas
-\item PF 
-\item   ILD, calice, etc.
-\item  ALEPH 
-\item   Apprendre caracteristiques des differents detecteurs
-\end{itemize}
-
-\newpage 
-
-\section*{Résumé}
-
-CMS est, avec ATLAS, l'une des deux grandes expériences généralistes installées au LHC, le grand collisionneur de hadrons du CERN.
-Le détecteur CMS est un cylindre de 25\,m de long et 15\,m de diamètre, constitué de sous-détecteurs arrangés en couches successives. 
-Chacun de ces sous-détecteurs fut pensé en vue de la mesure d'une observable particulière pour l'étude des événements de collision proton-proton du LHC. 
-Ainsi, le détecteur de traces central, qui permet la reconstruction de la trajectoire des particules chargées, fut principalement conçu dans le but d'identifier les jets issus de quarks b et les désintégrations hadroniques du lepton $\tau$. 
-Le calorimètre électromagnétique fut créé spécifiquement pour la détection des photons et des électrons énergétiques, et le calorimètre hadronique pour celle des jets et de l'énergie transverse manquante. 
-Enfin, les détecteurs situés à la périphérie de l'appareillage ont pour but l'identification et la reconstruction des muons, 
-seules particules détectables à parvenir jusqu'à eux. 
-Plutôt que de considérer les sous-détecteurs indépendamment, l'algorithme de reconstruction du flux de particules (PF) combine les informations de tous les sous-détecteurs pour reconstruire et identifier de manière optimale toutes les particules stables de l'état final de la collision: electrons, muons, photons, hadrons chargés, et hadrons neutres. 
-Cette approche novatrice de la reconstruction, développée et utilisée avec succès en collision $\rm e^+e^-$, 
-est présentée pour la première fois en collision proton-proton, pour CMS.  
-La liste des particules produites par le PF constitue une description globale de l'événement de collision Elle est utilisée pour reconstruire avec une précision accrue toutes les observables utilisées dans les mesures physiques. 
-Ainsi, à titre d'example, les jets de particules et l'énergie transverse manquante sont reconstruits avec une résolution en énergie et en direction améliorée d'un facteur deux par rapport à ceux obtenus avec les techniques de reconstruction traditionnelles, basées sur les calorimètres. 
-Le PF permet une reconstruction précise toutes les particules, qu'elles proviennent de la collision proton-proton principale ayant donné lieu au déclenchement de l'acquisition, ou des collisions proton-proton parasites se produisant simultanément, lors du même croisement de paquets de protons. 
-Cette description fine de l'état final permet l'identification et la suppression de la majeure partie des particules provenant de collisions parasites. 
-
-L'ensemble des observables obtenues grâce au PF est utilisé pour la recherche d'un boson de Higgs du modèle standard se désintégrant en paire de $\tau$ dans les données collectées par CMS durant le run I du LHC, en 2011 et 2012. 
-Ce mode de désintégration est le seul permettant d'accéder au couplage du boson de Higgs aux leptons au LHC du fait de la masse élevée du $\tau$. 
-Plus généralement, il est de loin le plus prometteur pour s'assurer de l'existence même des couplages de Yukawa, 
-c'est à dire de la capacité du boson de Higgs d'interagir avec la matière, et donc de lui donner sa masse. 
-Dans 65\% des cas, le $\tau$ se désintègre de manière hadronique pour produire un neutrino et des hadrons chargés (généralement au nombre de un ou de trois), parfois accompagnés de $\pi^0$ qui se désintègrent immédiatement en deux photons. Sinon, la désintégration leptonique du $\tau$ produit un électron ou un muon, ainsi que deux neutrinos.
-La recherche est réalisée pour tous les canaux, $\PH \to \tau \tau = \mu \tauh$, $\Pe\tauh$, $\tauh \tauh$,  $\Pe \mu$, $\Pe \Pe$, $\mu \mu$, où $\tauh$ dénote les produits visibles de la désintégration hadronique.
-Dans chacun de ces canaux, la contribution du bruit de fond, extrêmement importante, est fortement réduite par une sélection et une catégorisation d'événements adéquate. 
-La catégorisation vise, en particulier, les différents modes de production du boson de Higgs grâce à des critères appliqués aux objets présents dans l'état final en plus de la paire de $\tau$: fusion gluon-gluon (1 jet), fusion de bosons vecteurs (2 jets), production associée à un boson $\PW$ ou $\cPZ$ (électrons ou muons).
-Le niveau de bruit reste cependant important après cette sélection, avec un rapport signal sur bruit de l'ordre de 10\%. 
-Les contributions résiduelles des sources de bruit de fond sont ensuite estimées avec précision à partir d'échantillons de données de contrôle. 
-On observe un excès d'événements par rapport à l'hypothèse d'un modèle standard sans boson de Higgs. 
-Cet excès est supérieur à trois déviations standard pour des hypothèses de masse du boson de Higgs comprises entre $m_{\rm H} = 115$ et 130\,\GeV. 
-Pour $m_{\rm H} = 125\,\GeV$, le produit de la section efficace par le rapport d'embranchement pour le signal observé est mesuré à $0.78 \pm 21$ fois la valeur attendue pour le modèle standard. 
-La masse de cette résonance, en supposant qu'il s'agit bien de $\PH \to \tau \tau$, est $m_{\rm H} = 122 \pm 7\,\GeV$. 
-Ces résultats constituent une mise en évidence du couplage entre le $\tau$ et le boson de Higgs découvert à une masse de 125\,\GeV en 2012 par les collaborations ATLAS et CMS. 
+\bibliography{thesis} 
 
 \end{document}
