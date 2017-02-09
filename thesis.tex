@@ -64,7 +64,44 @@
 \newif\ifcontents
 \contentstrue
 
+% macros for higgs to tau tau
 
+\newcommand{\xsecbr}{\sigma_\phi\cdot B_{\Pgt\Pgt}}
+\newcommand{\xsecbrH}{\sigma_H\cdot B_{\Pgt\Pgt}}
+\newcommand{\xsecbshort}{\sigma \times B}
+\newcommand{\MT}{\ensuremath{m_\mathrm{T}}\xspace}
+\newcommand{\vecMET}{\ensuremath{\vec{E}_\mathrm{T}^\mathrm{miss}}\xspace}
+\newcommand{\mvis}{\ensuremath{m_\text{vis}}\xspace}
+\newcommand{\mtt}{\ensuremath{m_{\Pgt\Pgt}}\xspace}
+\newcommand{\LT}{\ensuremath{L_\mathrm{T}}\xspace}
+\newcommand{\Hi}{\ensuremath{\mathrm{H}}}
+\newcommand{\W}{\PW}
+\newcommand{\WW}{\PW\PW}
+\newcommand{\emt}{\ensuremath{\Pe\Pgm\Pgt_h}}
+\newcommand{\mmt}{\ensuremath{\Pgm\Pgm\Pgt_h}}
+\newcommand{\WH}{\ensuremath{\W\Hi}}
+\newcommand{\ZH}{\ensuremath{\Z\Hi}}
+\newcommand{\hww}{\Hi\to\WW}
+% \newcommand{\htt}{\Hi\to\TT}
+\newcommand{\htt}{\ensuremath{\Hi\to\tau\tau}\xspace}
+\newcommand{\pth}{\ensuremath{\pt^{\tau\tau}}\xspace}
+\newcommand{\Pgth}{\ensuremath{\Pgt_{\rm h}}\xspace}
+\newcommand{\mjj}{\ensuremath{m_\mathrm{jj}}\xspace}
+\newcommand{\detajj}{\ensuremath{\Delta \eta_\mathrm{jj}}\xspace}
+\renewcommand{\Pm}{\ensuremath{\mu}\xspace}
+\newcommand{\bestfitmu}{\ensuremath{\hat \mu = 0.78 \pm 0.27}\xspace}
+\newcommand{\kappav}{\ensuremath{\kappa_\mathrm{V}}\xspace}
+\newcommand{\kappaf}{\ensuremath{\kappa_\mathrm{f}}\xspace}
+
+\newcommand{\emu}{\Pe\Pgm}
+\newcommand{\ee}{\Pe\Pe}
+\newcommand{\mumu}{\Pgm\Pgm}
+\newcommand{\mutau}{\Pgm\Pgth}
+\newcommand{\etau}{\Pe\Pgth}
+\newcommand{\tautau}{\Pgth\Pgth}
+
+
+\providecommand{\mH}{\ensuremath{m_{\PH}}\xspace}
 
 \begin{document}
 \title{Reconstruction du flux de particules et mise en évidence de la désintégration du boson de Higgs en paire de $\tau$.}
@@ -141,9 +178,6 @@
 
 \subimport*{PRF-14-001/trunk/}{cms_detector.tex}
 
-
-%\clearpage
-
 \section{Reconstruction of the particle-flow elements}
 \label{sec:reconstruction_pf_elements}
 
@@ -187,12 +221,28 @@
 
 \pagebreak 
 
+\subimport*{HIG-13-004/trunk/}{contents.tex}
+
+\pagebreak 
+
 \input{conclusion}
 
-\newpage 
+\pagebreak
 
-\input{resume}
+\appendix
+
+\chapter[H to tau tau]{$\PH \to \tau \tau$}
+
+\pagebreak
+
+\subimport*{HIG-13-004/trunk/}{contents_appendix.tex}
 
 \bibliography{thesis} 
+
+% \subimport*{HIG-13-004/trunk/}{contents_appendix.tex}
+
+\pagebreak
+
+\input{resume}
 
 \end{document}
